@@ -5,6 +5,9 @@ import { View, Platform } from 'react-native';
 import { createStackNavigator, createDrawerNavigator } from 'react-navigation';
 import { Icon } from 'react-native-elements';
 import Home from './HomeComponent';
+import ContactUs from './ContactComponent';
+import AboutUs from './AboutComponent';
+
 
 const MenuNavigator = createStackNavigator({
     Menu: { screen: Menu },
@@ -17,6 +20,32 @@ const MenuNavigator = createStackNavigator({
       },
       headerTintStyle: '#fff',
       headerTitleStyle: { color: '#fff' }
+  }
+})
+
+const ContactUsNavigator = createStackNavigator({
+  ContactUs: { screen: ContactUs }
+}, {
+  initialRoutName: 'Contact Us',
+  navigationOptions: {
+    headerStyle: {
+      backgroundColor: '#512DA8'
+    },
+    headerTintStyle: '#fff',
+    headerTitleStyle: { color: '#fff' }
+}
+})
+
+const AboutUsNavigator = createStackNavigator({
+  ContactUs: { screen: AboutUs }
+  }, {
+  initialRoutName: 'About Us',
+  navigationOptions: {
+    headerStyle: {
+      backgroundColor: '#512DA8'
+    },
+    headerTintStyle: '#fff',
+    headerTitleStyle: { color: '#fff' }
   }
 })
 
@@ -42,11 +71,25 @@ const MainNavigator = createDrawerNavigator({
         drawerLabel: 'Home'
       }
     },
+  AboutUs: 
+    { screen: AboutUsNavigator,
+      navigationOptions: {
+        title: 'About Us',
+        drawerLabel: 'About Us'
+      }, 
+    },
   Menu: 
     { screen: MenuNavigator,
       navigationOptions: {
         title: 'Menu',
         drawerLabel: 'Menu'
+      }, 
+    },
+  ContactUs: 
+    { screen: ContactUsNavigator,
+      navigationOptions: {
+        title: 'Contact Us',
+        drawerLabel: 'Contact Us'
       }, 
     }
 }, {
@@ -59,9 +102,6 @@ class Main extends Component {
 
     return (
       <View style={{ flex: 1, paddingTop: Platform.OS === 'ios' ? 0 : Expo.Constants.statusBarHeight }}>
-        {/* <Menu dishes={this.state.dishes} onPress={(dishId) => this.onDishSelect(dishId)} />
-        <Dishdetail dish={this.state.dishes.filter((dish) => dish.id === this.state.selectedDish)[0]} /> */}
-        {/* <MenuNavigator /> */}
         <MainNavigator />
       </View>);
   }
