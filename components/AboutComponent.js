@@ -4,7 +4,14 @@ import { Card } from 'react-native-elements';
 import { LEADERS } from '../shared/leaders';
 import { FlatList } from 'react-native';
 import { ListItem } from 'react-native-elements';
+import { connect } from 'react-redux';
+import { baseUrl } from '../shared/baseUrl';
 
+const mapStateToProps = state => {
+    return {
+      leaders: state.leaders
+    }
+  }
 
 function History() {
     return (
@@ -26,7 +33,7 @@ function RenderLeaders(props) {
                 title={item.name}
                 subtitle={item.description}
                 hideChevron={true}
-                leftAvatar={{ source: require('./images/alberto.png') }} />
+                leftAvatar={{source: {uri: baseUrl + item.image}}} />
         );
     };
 
@@ -57,10 +64,11 @@ class AboutUs extends Component {
         return (
             <ScrollView>
                 <History />
-                <RenderLeaders leaders = {this.state.leaders} />
+                <RenderLeaders leaders = {this.props.leaders.leaders} />
+                {/* <RenderLeaders leaders = {this.state.leaders} /> */}
             </ScrollView>
         )
     }
 }
 
-export default AboutUs;
+export default connect(mapStateToProps)(AboutUs);
