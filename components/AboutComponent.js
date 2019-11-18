@@ -86,7 +86,7 @@ class AboutUs extends Component {
         }
         else {
             return(
-                <ScrollView>
+            <ScrollView>
                 <History />
                 <RenderLeaders leaders = {this.props.leaders.leaders} />
             </ScrollView>
