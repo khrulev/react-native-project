@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Text, View, ScrollView} from 'react-native';
+import { Text, View, ScrollView } from 'react-native';
 import { Card } from 'react-native-elements';
 import { LEADERS } from '../shared/leaders';
 import { FlatList } from 'react-native';
@@ -7,12 +7,13 @@ import { ListItem } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { baseUrl } from '../shared/baseUrl';
 import { Loading } from './LoadingComponent';
+import * as Animatable from 'react-native-animatable';
 
 const mapStateToProps = state => {
     return {
-      leaders: state.leaders
+        leaders: state.leaders
     }
-  }
+}
 
 function History() {
     return (
@@ -34,7 +35,7 @@ function RenderLeaders(props) {
                 title={item.name}
                 subtitle={item.description}
                 hideChevron={true}
-                leftAvatar={{source: {uri: baseUrl + item.image}}} />
+                leftAvatar={{ source: { uri: baseUrl + item.image } }} />
         );
     };
 
@@ -49,7 +50,7 @@ function RenderLeaders(props) {
 }
 
 class AboutUs extends Component {
-    
+
     constructor(props) {
         super(props);
         this.state = {
@@ -63,7 +64,7 @@ class AboutUs extends Component {
 
     render() {
         if (this.props.leaders.isLoading) {
-            return(
+            return (
                 <ScrollView>
                     <History />
                     <Card
@@ -74,22 +75,26 @@ class AboutUs extends Component {
             );
         }
         else if (this.props.leaders.errMess) {
-            return(
+            return (
                 <ScrollView>
-                    <History />
-                    <Card
-                        title='Corporate Leadership'>
-                        <Text>{this.props.leaders.errMess}</Text>
-                    </Card>
+                    <Animatable.View animation="fadeInDown" duration={2000} delay={1000}>
+                        <History />
+                        <Card
+                            title='Corporate Leadership'>
+                            <Text>{this.props.leaders.errMess}</Text>
+                        </Card>
+                    </Animatable.View>
                 </ScrollView>
             );
         }
         else {
-            return(
-            <ScrollView>
-                <History />
-                <RenderLeaders leaders = {this.props.leaders.leaders} />
-            </ScrollView>
+            return (
+                <ScrollView>
+                    <Animatable.View animation="fadeInDown" duration={2000} delay={1000}>
+                    <History />
+                    <RenderLeaders leaders={this.props.leaders.leaders} />
+                    </Animatable.View>
+                </ScrollView>
             );
         }
     }
