@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Text, View, ScrollView, FlatList, Modal, StyleSheet, Button, Alert, PanResponder } from 'react-native';
+import { Text, View, ScrollView, FlatList, Modal, StyleSheet, Button, Alert, PanResponder, Share } from 'react-native';
 import { DISHES } from '../shared/dishes';
 import { COMMENTS } from '../shared/comments';
 import { Card, Icon, Input, TextInput } from 'react-native-elements';
@@ -8,6 +8,16 @@ import { baseUrl } from '../shared/baseUrl';
 import { postFavorite, postComment } from '../redux/ActionCreators';
 import { Rating } from 'react-native-elements';
 import * as Animatable from 'react-native-animatable';
+
+const shareDish = (title, message, url) => {
+    Share.share({
+        title: title,
+        message: title + ': ' + message + ' ' + url,
+        url: url
+    },{
+        dialogTitle: 'Share ' + title
+    })
+}
 
 const styles = StyleSheet.create({
     iconDish: {
@@ -135,6 +145,14 @@ function RenderDish(props) {
                             color='#512DA8'
                             onPress={() => props.onAddCommentPress()}
                         />
+                        <Icon
+                            raised
+                            reverse
+                            name='share'
+                            type='font-awesome'
+                            color='#51D2A8'
+                            style={styles.cardItem}
+                            onPress={() => shareDish(dish.name, dish.description, baseUrl + dish.image)} />
                     </View>
                 </Card>
             </Animatable.View>
