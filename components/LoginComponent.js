@@ -27,9 +27,9 @@ class LoginTab extends Component {
             .then((userdata) => {
                 let userinfo = JSON.parse(userdata);
                 if (userinfo) {
-                    this.setState({username: userinfo.username});
-                    this.setState({password: userinfo.password});
-                    this.setState({remember: true})
+                    this.setState({ username: userinfo.username });
+                    this.setState({ password: userinfo.password });
+                    this.setState({ remember: true })
                 }
             })
     }
@@ -38,20 +38,21 @@ class LoginTab extends Component {
         title: 'Login',
         tabBarIcon: ({ tintColor }) => (
             <Icon
-              name='sign-in'
-              type='font-awesome'            
-              size={24}
-              iconStyle={{ color: tintColor }}
+                name='sign-in'
+                type='font-awesome'
+                size={24}
+                iconStyle={{ color: tintColor }}
             />
-          ) 
+        )
     };
 
     handleLogin() {
-        console.log(JSON.stringify(this.state));
+        // console.log(JSON.stringify(this.state));
         if (this.state.remember) {
-            SecureStore.setItemAsync('userinfo', JSON.stringify({username: this.state.username, password: this.state.password}))
-                .catch((error) => console.log('Could not save user info', error)); }
-        else 
+            SecureStore.setItemAsync('userinfo', JSON.stringify({ username: this.state.username, password: this.state.password }))
+                .catch((error) => console.log('Could not save user info', error));
+        }
+        else
             SecureStore.deleteItemAsync('userinfo')
                 .catch((error) => console.log('Could not delete user info', error));
 
@@ -63,39 +64,39 @@ class LoginTab extends Component {
                 <Input
                     placeholder="Username"
                     leftIcon={{ type: 'font-awesome', name: 'user-o' }}
-                    onChangeText={(username) => this.setState({username})}
+                    onChangeText={(username) => this.setState({ username })}
                     value={this.state.username}
                     containerStyle={styles.formInput}
-                    />
+                />
                 <Input
                     placeholder="Password"
                     leftIcon={{ type: 'font-awesome', name: 'key' }}
-                    onChangeText={(password) => this.setState({password})}
+                    onChangeText={(password) => this.setState({ password })}
                     value={this.state.password}
                     containerStyle={styles.formInput}
-                    />
+                />
                 <CheckBox title="Remember Me"
                     center
                     checked={this.state.remember}
-                    onPress={() => this.setState({remember: !this.state.remember})}
+                    onPress={() => this.setState({ remember: !this.state.remember })}
                     containerStyle={styles.formCheckbox}
-                    />
-                 <View style={styles.formButton}>
+                />
+                <View style={styles.formButton}>
                     <Button
                         onPress={() => this.handleLogin()}
                         title="Login"
                         icon={
                             <Icon
                                 name='sign-in'
-                                type='font-awesome'            
+                                type='font-awesome'
                                 size={24}
-                                color= 'white'
+                                color='white'
                             />
                         }
                         buttonStyle={{
                             backgroundColor: "#512DA8"
                         }}
-                        />
+                    />
                 </View>
                 <View style={styles.formButton}>
                     <Button
@@ -105,15 +106,15 @@ class LoginTab extends Component {
                         icon={
                             <Icon
                                 name='user-plus'
-                                type='font-awesome'            
+                                type='font-awesome'
                                 size={24}
-                                color= 'blue'
+                                color='blue'
                             />
                         }
                         titleStyle={{
                             color: "blue"
                         }}
-                        />
+                    />
                 </View>
             </View>
         );
@@ -154,112 +155,140 @@ class RegisterTab extends Component {
 
     }
 
+    getImageFromGallery = async () => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.All,
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 1
+        });
+
+        if (!result.cancelled) {
+            console.log(result);
+            this.processImage(result.uri);
+        }
+    }
+
     processImage = async (imageUri) => {
         let processedImage = await ImageManipulator.manipulateAsync(
-            imageUri, 
+            imageUri,
             [
-                {resize: {width: 400}}
+                { resize: { width: 400 } }
             ],
-            {format: 'png'}
+            { format: 'png' }
         );
         console.log(processedImage);
-        this.setState({imageUrl: processedImage.uri });
+        this.setState({ imageUrl: processedImage.uri });
 
     }
-    
+
     static navigationOptions = {
         title: 'Register',
         tabBarIcon: ({ tintColor, focused }) => (
             <Icon
-              name='user-plus'
-              type='font-awesome'            
-              size={24}
-              iconStyle={{ color: tintColor }}
+                name='user-plus'
+                type='font-awesome'
+                size={24}
+                iconStyle={{ color: tintColor }}
             />
-          ) 
+        )
     };
 
     handleRegister() {
-        console.log(JSON.stringify(this.state));
+        // console.log(JSON.stringify(this.state));
         if (this.state.remember)
-            SecureStore.setItemAsync('userinfo', JSON.stringify({username: this.state.username, password: this.state.password}))
+            SecureStore.setItemAsync('userinfo', JSON.stringify({ username: this.state.username, password: this.state.password }))
                 .catch((error) => console.log('Could not save user info', error));
     }
 
     render() {
-        return(
+        return (
             <ScrollView>
-            <View style={styles.container}>
-                <View style={styles.imageContainer}>
-                    <Image 
-                        source={{uri: this.state.imageUrl}} 
-                        loadingIndicatorSource={require('./images/logo.png')}
-                        style={styles.image} 
+                <View style={styles.container}>
+                    <View style={styles.row}>
+
+                        <View style={styles.column}>
+                            <View style={styles.imageContainer}>
+                                <Image
+                                    source={{ uri: this.state.imageUrl }}
+                                    loadingIndicatorSource={require('./images/logo.png')}
+                                    style={styles.image}
+                                />
+
+                            </View>
+                        </View>
+                        <View style={styles.column}>
+                        <Button
+                            title="Camera"
+                            onPress={this.getImageFromCamera}
                         />
-                    <Button
-                        title="Camera"
-                        onPress={this.getImageFromCamera}
+                        </View>
+                        <View style={styles.column}>
+                        <Button
+                            title="Gallery"
+                            onPress={this.getImageFromGallery}
                         />
+                        </View>
+                    </View>
+                    <Input
+                        placeholder="Username"
+                        leftIcon={{ type: 'font-awesome', name: 'user-o' }}
+                        onChangeText={(username) => this.setState({ username })}
+                        value={this.state.username}
+                        containerStyle={styles.formInput}
+                    />
+                    <Input
+                        placeholder="Password"
+                        leftIcon={{ type: 'font-awesome', name: 'key' }}
+                        onChangeText={(password) => this.setState({ password })}
+                        value={this.state.password}
+                        containerStyle={styles.formInput}
+                    />
+                    <Input
+                        placeholder="First Name"
+                        leftIcon={{ type: 'font-awesome', name: 'user-o' }}
+                        onChangeText={(lastname) => this.setState({ firstname })}
+                        value={this.state.firstname}
+                        containerStyle={styles.formInput}
+                    />
+                    <Input
+                        placeholder="Last Name"
+                        leftIcon={{ type: 'font-awesome', name: 'user-o' }}
+                        onChangeText={(lastname) => this.setState({ lastname })}
+                        value={this.state.lastname}
+                        containerStyle={styles.formInput}
+                    />
+                    <Input
+                        placeholder="Email"
+                        leftIcon={{ type: 'font-awesome', name: 'envelope-o' }}
+                        onChangeText={(email) => this.setState({ email })}
+                        value={this.state.email}
+                        containerStyle={styles.formInput}
+                    />
+                    <CheckBox title="Remember Me"
+                        center
+                        checked={this.state.remember}
+                        onPress={() => this.setState({ remember: !this.state.remember })}
+                        containerStyle={styles.formCheckbox}
+                    />
+                    <View style={styles.formButton}>
+                        <Button
+                            onPress={() => this.handleRegister()}
+                            title="Register"
+                            icon={
+                                <Icon
+                                    name='user-plus'
+                                    type='font-awesome'
+                                    size={24}
+                                    color='white'
+                                />
+                            }
+                            buttonStyle={{
+                                backgroundColor: "#512DA8"
+                            }}
+                        />
+                    </View>
                 </View>
-                <Input
-                    placeholder="Username"
-                    leftIcon={{ type: 'font-awesome', name: 'user-o' }}
-                    onChangeText={(username) => this.setState({username})}
-                    value={this.state.username}
-                    containerStyle={styles.formInput}
-                    />
-                <Input
-                    placeholder="Password"
-                    leftIcon={{ type: 'font-awesome', name: 'key' }}
-                    onChangeText={(password) => this.setState({password})}
-                    value={this.state.password}
-                    containerStyle={styles.formInput}
-                    />
-                <Input
-                    placeholder="First Name"
-                    leftIcon={{ type: 'font-awesome', name: 'user-o' }}
-                    onChangeText={(lastname) => this.setState({firstname})}
-                    value={this.state.firstname}
-                    containerStyle={styles.formInput}
-                    />
-                <Input
-                    placeholder="Last Name"
-                    leftIcon={{ type: 'font-awesome', name: 'user-o' }}
-                    onChangeText={(lastname) => this.setState({lastname})}
-                    value={this.state.lastname}
-                    containerStyle={styles.formInput}
-                    />
-                <Input
-                    placeholder="Email"
-                    leftIcon={{ type: 'font-awesome', name: 'envelope-o' }}
-                    onChangeText={(email) => this.setState({email})}
-                    value={this.state.email}
-                    containerStyle={styles.formInput}
-                    />
-                <CheckBox title="Remember Me"
-                    center
-                    checked={this.state.remember}
-                    onPress={() => this.setState({remember: !this.state.remember})}
-                    containerStyle={styles.formCheckbox}
-                    />
-                <View style={styles.formButton}>
-                    <Button
-                        onPress={() => this.handleRegister()}
-                        title="Register"
-                        icon={
-                            <Icon
-                                name='user-plus'
-                                type='font-awesome'            
-                                size={24}
-                                color= 'white'
-                            />
-                        }
-                        buttonStyle={{
-                            backgroundColor: "#512DA8"
-                        }}
-                        />
-                </View>
-            </View>
             </ScrollView>
         );
     }
@@ -276,9 +305,9 @@ const styles = StyleSheet.create({
         margin: 20
     },
     image: {
-      margin: 10,
-      width: 80,
-      height: 60
+        margin: 10,
+        width: 80,
+        height: 60
     },
     formInput: {
         margin: 20
@@ -289,7 +318,15 @@ const styles = StyleSheet.create({
     },
     formButton: {
         margin: 60
-    }
+    },
+    column: {
+        justifyContent: 'center',
+        flexDirection: 'column'
+    },
+    row: {
+        flexDirection: 'row',
+        justifyContent: 'space-between'
+      }
 });
 
 const Login = createBottomTabNavigator({

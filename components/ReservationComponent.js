@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import { Text, View, ScrollView, StyleSheet, Picker, Switch, Button, Alert } from 'react-native';
-import { Card } from 'react-native-elements';
+import { Text, View, StyleSheet, Picker, Switch, Button, Alert } from 'react-native';
 import DatePicker from 'react-native-datepicker'
 import * as Animatable from 'react-native-animatable';
 import { Notifications } from 'expo';
 import * as Permissions from 'expo-permissions';
+import * as Calendar from 'expo-calendar';
 
 class Reservation extends Component {
 
@@ -27,10 +27,27 @@ class Reservation extends Component {
         this.setState({showModal: !this.state.showModal});
     }
 
-    // handleReservation() {
-    //     // console.log(JSON.stringify(this.state));
-    //     this.toggleModal();
-    // }
+    async obtainCalendarPermission() {
+        const { status } = await Permissions.askAsync(Permissions.CALENDAR);
+        if (status !== 'granted') {
+            Alert.alert('Permission not granted to use calendar');
+        } 
+        Calendar.DEFAULT = "1";
+    }
+
+    async addReservationToCalendar(date) {
+        await this.obtainCalendarPermission();
+        var dateStart = new Date(Date.parse(date));
+        var dateEnd = new Date(Date.parse(date)+2*60*60*1000);
+        var eventId = await Calendar.createEventAsync("1", {
+             endDate: dateEnd,
+             startDate: dateStart,
+             timezone: "Asia/Hong_Kong",
+             location: "121, Clear Water Bay Road, Clear Water Bay, Kowloon, Hong Kong",
+             title: "Con Fusion Table Reservation"
+           });
+    }
+
     async obtainNotificationPermission() {
         let permission = await Permissions.getAsync(Permissions.USER_FACING_NOTIFICATIONS);
         if (permission.status !== 'granted') {
@@ -67,6 +84,11 @@ class Reservation extends Component {
         });
     }
 
+    handleReservation(date) {
+        this.presentLocalNotification(date);
+        this.addReservationToCalendar(date);
+        this.resetForm();   
+    }
 
     render() {
         const zoomIn = {
@@ -84,10 +106,7 @@ class Reservation extends Component {
             },
           };
 
-        
-
         return(
-
             <Animatable.View animation={zoomIn} duration={2000}>
                 <View style={styles.formRow}>
                 <Text style={styles.formLabel}>Number of Guests</Text>
@@ -108,7 +127,7 @@ class Reservation extends Component {
                 <Switch
                     style={styles.formItem}
                     value={this.state.smoking}
-                    onTintColor='#512DA8'
+                    // onTintColor='#512DA8'
                     onValueChange={(value) => this.setState({smoking: value})}>
                 </Switch>
                 </View>
@@ -133,7 +152,6 @@ class Reservation extends Component {
                     dateInput: {
                         marginLeft: 36
                     }
-                    // ... You can check the source to find the other keys. 
                     }}
                     onDateChange={(date) => {this.setState({date: date})}}
                 />
@@ -147,11 +165,8 @@ class Reservation extends Component {
                                  'Smoking? ' + smokingReserve +'\n ' +
                                  'Date and Time: ' + this.state.date ,
                                 [
-                                {text: 'Cancel', onPress: () => {this.resetForm()}},
-                                {text: 'OK', onPress: () => {
-                                    this.presentLocalNotification(this.state.date);
-                                    this.resetForm()}
-                                },
+                                    {text: 'Cancel', onPress: () => {this.resetForm()}},
+                                    {text: 'OK', onPress: () => {this.handleReservation(this.state.date)}}
                                 ],
                                 { cancelable: false }
                             );}
@@ -161,26 +176,6 @@ class Reservation extends Component {
                     accessibilityLabel="Learn more about this purple button"
                     />
                 </View>
-                {/* <Modal animationType = {"slide"} transparent = {false}
-                    visible = {this.state.showModal}
-                    onDismiss = {() => this.toggleModal() }
-                    onRequestClose = {() => this.toggleModal() }>
-                    <View style = {styles.modal}>
-                        <Text style = {styles.modalTitle}>Your Reservation</Text>
-                        <Text style = {styles.modalText}>Number of Guests: {this.state.guests}</Text>
-                        <Text style = {styles.modalText}>Smoking?: {this.state.smoking ? 'Yes' : 'No'}</Text>
-                        <Text style = {styles.modalText}>Date and Time: {this.state.date}</Text>
-                        
-                        <Button 
-                            onPress = {() =>{this.toggleModal(); this.resetForm();}}
-                            color="#512DA8"
-                            title="Close" 
-                            />
-                    </View>
-                </Modal> */}
-
-
-
             </Animatable.View>
         );
     }
